@@ -154,6 +154,26 @@ const APPLICATION_COUNTER_FILE_PATH = path.join(__dirname, 'application-counter.
 const SUBMITTED_APPLICATIONS_FILE_PATH = path.join(__dirname, 'submitted-applications.json');
 const SUBMISSION_LOCKS_DIR = path.join(__dirname, 'submission_locks');
 const TEST_TIMES_FILE_PATH = path.join(__dirname, 'test-times.json');
+
+function cleanupStaleSubmissionLocks() {
+  try {
+    if (!fs.existsSync(SUBMISSION_LOCKS_DIR)) return;
+    let removed = 0;
+    for (const name of fs.readdirSync(SUBMISSION_LOCKS_DIR)) {
+      if (!name.endsWith('.lock')) continue;
+      try {
+        fs.unlinkSync(path.join(SUBMISSION_LOCKS_DIR, name));
+        removed += 1;
+      } catch {}
+    }
+    if (removed) console.log(`[BOOT] Cleared ${removed} stale submission lock(s).`);
+  } catch (err) {
+    console.error('[BOOT] Failed to clean submission locks:', err);
+  }
+}
+
+cleanupStaleSubmissionLocks();
+
 const APPLICATIONS_CHANNEL_ID = process.env.APPLICATIONS_CHANNEL_ID || process.env.APPLY_CHANNEL_ID;
 const APPLY_MESSAGE_CHANNEL_ID = process.env.APPLY_MESSAGE_CHANNEL_ID || process.env.APPLY_CHANNEL_ID;
 const APPLY_LOG_CHANNEL_ID = process.env.APPLY_LOG_CHANNEL_ID;

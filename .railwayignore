@@ -1,0 +1,9 @@
+node_modules
+.git
+.env
+.env.local
+*.log
+bot.lock
+submission_locks
+AV BOT
+env
